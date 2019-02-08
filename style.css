@@ -4,7 +4,13 @@
   box-sizing: border-box;
 }
 
+
 .header {
+  color: brown;
+  border: 1px solid black;
+}
+
+.nav {
   color: brown;
   border: 1px solid black;
 }
