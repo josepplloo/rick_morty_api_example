@@ -51,10 +51,16 @@ function paintButton(){
 }
 
 function paintHome(imagesDOM){
+  cons
+
   firstRnd = Math.floor(Math.random() * 21); 
   secondRnd = Math.floor(Math.random() * 21); 
   thirdRnd = Math.floor(Math.random() * 21);
 
+  /**
+   * BUG ALERT, sometimes the same image apear or some
+   * ones disapiar
+   */
   console.log(imagesDOM[firstRnd], imagesDOM[secondRnd], imagesDOM[thirdRnd])
 
   const homeContainer = document.getElementById('home');
@@ -65,8 +71,11 @@ function paintHome(imagesDOM){
 }
 
 function paintCharacters(imagesDOM){
-  const characterContainer = document.querySelector('.nav');
-  characterContainer.innerHTML= imagesDOM;
+  const characterContainer = document.getElementById('characters');
+  console.log(location)
+  for (const iterator of imagesDOM) {
+    characterContainer.appendChild(iterator);
+  }
 }
 
 
@@ -86,6 +95,26 @@ function paintCharacters(imagesDOM){
 
   paintHome(imagesParsed);
   paintButton();
+
+  const buttonForSwitch = document.querySelector('.button');
+
+  buttonForSwitch.addEventListener('click', function() {
+    const homeContainer = document.getElementById('home');
+    const charsContainer = document.getElementById('characters');
+
+    if(charsContainer.classList[1] === 'blackHole'){
+      homeContainer.classList.add('blackHole')
+      this.innerHTML = 'Show Less ...';
+      charsContainer.classList.remove('blackHole');
+      paintCharacters(imagesParsed);
+    }else{
+      this.innerHTML = 'Show More ...';
+      charsContainer.classList.add('blackHole')
+      homeContainer.classList.remove('blackHole');
+    }
+
+
+  });
 
 }
 
