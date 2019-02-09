@@ -5,6 +5,16 @@ function getRickMortysData () {
   then(response => response.json());
 }
 
+/**
+   * BUG ALERT, The page does not redirect
+   * onli change the url
+   */
+function locationHelper (whereIAm){
+  history.replaceState({
+    id: 'whereIAm'
+    }, '', whereIAm);
+}
+
 
 /**
  * https://bost.ocks.org/mike/shuffle/
@@ -51,7 +61,8 @@ function paintButton(){
 }
 
 function paintHome(imagesDOM){
-  cons
+
+  locationHelper('/home');
 
   firstRnd = Math.floor(Math.random() * 21); 
   secondRnd = Math.floor(Math.random() * 21); 
@@ -71,6 +82,8 @@ function paintHome(imagesDOM){
 }
 
 function paintCharacters(imagesDOM){
+  locationHelper('/characters');
+
   const characterContainer = document.getElementById('characters');
   console.log(location)
   for (const iterator of imagesDOM) {
@@ -96,9 +109,9 @@ function paintCharacters(imagesDOM){
   paintHome(imagesParsed);
   paintButton();
 
-  const buttonForSwitch = document.querySelector('.button');
+  const buttonForToggle = document.querySelector('.button');
 
-  buttonForSwitch.addEventListener('click', function() {
+  buttonForToggle.addEventListener('click', function() {
     const homeContainer = document.getElementById('home');
     const charsContainer = document.getElementById('characters');
 
@@ -111,8 +124,8 @@ function paintCharacters(imagesDOM){
       this.innerHTML = 'Show More ...';
       charsContainer.classList.add('blackHole')
       homeContainer.classList.remove('blackHole');
+      locationHelper('/home');
     }
-
 
   });
 
