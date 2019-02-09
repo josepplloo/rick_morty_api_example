@@ -60,6 +60,19 @@ function paintButton(){
     buttonContainer.appendChild(buttonParserd[0]);
 }
 
+function paintDetails(item){
+  
+
+  const detailDOM = (`
+    <div>
+      <img id="${item.id}" src="${item.src}" alt="${item.alt}" class="char-img"/>
+      <h3>${item.alt}</h3>
+      <p>${item.attributes.status.value}</p>
+    </div>  
+    `) ;
+  return parserAssistant(detailDOM);
+}
+
 function paintHome(imagesDOM){
 
   locationHelper('/home');
@@ -85,10 +98,25 @@ function paintCharacters(imagesDOM){
   locationHelper('/characters');
 
   const characterContainer = document.getElementById('characters');
-  console.log(location)
+  const detailsContainer = document.getElementById('details');
+
   for (const iterator of imagesDOM) {
     characterContainer.appendChild(iterator);
   }
+
+  characterContainer.addEventListener('click',
+  function(event){
+    const clickedElement = event.target;
+
+    if(clickedElement.nodeName == 'IMG' ){
+      const details = paintDetails(clickedElement);
+      locationHelper('/details');
+      detailsContainer.appendChild(details[0]);
+      detailsContainer.classList.remove('blackHole');
+      characterContainer.classList.add('blackHole');
+    }
+     
+  });
 }
 
 
@@ -100,7 +128,9 @@ function paintCharacters(imagesDOM){
 
   const imagesDOM = preprosesingData.map(item => {
     return (`
-        <img id="${item.id}" src="${item.image}" alt="${item.name}" class="char-img"/>
+        <img id="${item.id}" src="${item.image}" 
+        alt="${item.name}" class="char-img" 
+        status ="${item.status}" />
     `) ;
   });
   
@@ -126,6 +156,7 @@ function paintCharacters(imagesDOM){
       homeContainer.classList.remove('blackHole');
       locationHelper('/home');
     }
+
 
   });
 
