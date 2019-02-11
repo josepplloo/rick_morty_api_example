@@ -78,12 +78,17 @@ function paintHome(imagesDOM){
 
   firstRnd = Math.floor(Math.random() * 21); 
   secondRnd = Math.floor(Math.random() * 21); 
+  while (secondRnd ===firstRnd) {
+    secondRnd = Math.floor(Math.random() * 21); 
+  }
   thirdRnd = Math.floor(Math.random() * 21);
-
+  while (thirdRnd ===firstRnd || thirdRnd ===secondRnd) {
+    thirdRnd = Math.floor(Math.random() * 21); 
+  }
   /**
-   * BUG ALERT, sometimes the same image apear or some
-   * ones disapiar
+   * IDK if it was a good validation
    */
+
   console.log(imagesDOM[firstRnd], imagesDOM[secondRnd], imagesDOM[thirdRnd])
 
   const homeContainer = document.getElementById('home');
@@ -103,20 +108,30 @@ function paintCharacters(imagesDOM){
     characterContainer.appendChild(iterator);
   }
 
+  /**
+   * Adding Action for display details
+   */
+  
   characterContainer.addEventListener('click',
   function(event){
     const clickedElement = event.target;
 
     if(clickedElement.nodeName == 'IMG' ){
+      while (detailsContainer.firstChild){
+        detailsContainer.removeChild(detailsContainer.firstChild);
+      }
       const details = paintDetails(clickedElement);
       locationHelper('/details');
       detailsContainer.appendChild(details[0]);
-      detailsContainer.classList.remove('blackHole');
-      characterContainer.classList.add('blackHole');
+      detailsContainer.classList.remove('hiddenBlock');
+      characterContainer.classList.add('hiddenBlock');
     }
      
   });
+
 }
+
+
 
 
 
@@ -143,21 +158,30 @@ function paintCharacters(imagesDOM){
   buttonForToggle.addEventListener('click', function() {
     const homeContainer = document.getElementById('home');
     const charsContainer = document.getElementById('characters');
+    const detailsContainer = document.getElementById('details');
 
-    if(charsContainer.classList[1] === 'blackHole'){
-      homeContainer.classList.add('blackHole')
+
+    if(charsContainer.classList[1] === 'hiddenBlock'){
+      homeContainer.classList.add('hiddenBlock')
+      detailsContainer.classList.add('hiddenBlock');
       this.innerHTML = 'Show Less ...';
-      charsContainer.classList.remove('blackHole');
+      charsContainer.classList.remove('hiddenBlock');
       paintCharacters(imagesParsed);
     }else{
       this.innerHTML = 'Show More ...';
-      charsContainer.classList.add('blackHole')
-      homeContainer.classList.remove('blackHole');
+      charsContainer.classList.add('hiddenBlock')
+      homeContainer.classList.remove('hiddenBlock');
       locationHelper('/home');
     }
 
 
   });
+
+  /**
+   * rules
+   */
+
+
 
 }
 
