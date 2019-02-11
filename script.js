@@ -15,7 +15,6 @@ function locationHelper (whereIAm){
     }, '', whereIAm);
 }
 
-
 /**
  * https://bost.ocks.org/mike/shuffle/
  * @param {*} array 
@@ -163,4 +162,3 @@ function paintCharacters(imagesDOM){
 }
 
 getRickMortysData().then(buildApp);
-
