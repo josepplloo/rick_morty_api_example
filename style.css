@@ -10,6 +10,29 @@
   border: 1px solid black;
 }
 
+.header-list {
+  display: flex;
+}
+
+.header-item {
+  margin: 0 5px;
+  cursor: pointer;
+  padding: 1px;
+  list-style-type: none; /* remove bullets */
+
+}
+
+.header-item::before {
+content: "\200B"; /* add zero-width space */
+}
+
+.header-item:hover {
+  color: brown;
+  border-radius: 4px;
+  padding: 1px;
+  text-decoration: underline overline black;
+}
+
 .nav {
   color: brown;
   border: 1px solid black;

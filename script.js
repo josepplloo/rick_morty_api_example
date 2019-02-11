@@ -5,6 +5,15 @@ function getRickMortysData () {
   then(response => response.json());
 }
 
+function eraseElements(elementus){
+  if( elementus != null ){
+    while (elementus.firstChild){
+      elementus.removeChild(elementus.firstChild);
+    }
+  }
+  
+}
+
 /**
    * BUG ALERT, The page does not redirect
    * onli change the url
@@ -74,24 +83,28 @@ function paintDetails(item){
 
 function paintHome(imagesDOM){
 
+  const homeContainer = document.getElementById('home');
+
+  eraseElements(homeContainer)
+
   locationHelper('/home');
 
-  firstRnd = Math.floor(Math.random() * 21); 
-  secondRnd = Math.floor(Math.random() * 21); 
-  while (secondRnd ===firstRnd) {
-    secondRnd = Math.floor(Math.random() * 21); 
-  }
-  thirdRnd = Math.floor(Math.random() * 21);
-  while (thirdRnd ===firstRnd || thirdRnd ===secondRnd) {
-    thirdRnd = Math.floor(Math.random() * 21); 
-  }
   /**
    * IDK if it was a good validation
    */
+  firstRnd = Math.floor(Math.random() * 20); 
+  secondRnd = Math.floor(Math.random() * 20); 
+  while (secondRnd ===firstRnd) {
+    secondRnd = Math.floor(Math.random() * 20); 
+  }
+  thirdRnd = Math.floor(Math.random() * 20);
+  while (thirdRnd ===firstRnd || thirdRnd ===secondRnd) {
+    thirdRnd = Math.floor(Math.random() * 20); 
+  }
+  
 
   console.log(imagesDOM[firstRnd], imagesDOM[secondRnd], imagesDOM[thirdRnd])
 
-  const homeContainer = document.getElementById('home');
   homeContainer.appendChild(imagesDOM[firstRnd]);
   homeContainer.appendChild(imagesDOM[secondRnd]);
   homeContainer.appendChild(imagesDOM[thirdRnd]);
@@ -117,9 +130,9 @@ function paintCharacters(imagesDOM){
     const clickedElement = event.target;
 
     if(clickedElement.nodeName == 'IMG' ){
-      while (detailsContainer.firstChild){
-        detailsContainer.removeChild(detailsContainer.firstChild);
-      }
+      
+      eraseElements(detailsContainer);
+      
       const details = paintDetails(clickedElement);
       locationHelper('/details');
       detailsContainer.appendChild(details[0]);
@@ -130,8 +143,6 @@ function paintCharacters(imagesDOM){
   });
 
 }
-
-
 
 
 
@@ -153,24 +164,45 @@ function paintCharacters(imagesDOM){
   paintHome(imagesParsed);
   paintButton();
 
+  const unordererList = document.querySelectorAll('.header-item');
+  const homeContainer = document.getElementById('home');
+  const charsContainer = document.getElementById('characters');
+  const detailsContainer = document.getElementById('details');
+  
+  function showMore(){
+    //for display all
+    homeContainer.classList.add('hiddenBlock')
+    detailsContainer.classList.add('hiddenBlock');
+    charsContainer.classList.remove('hiddenBlock');
+
+  }
+
+  function showLess(){
+    //for display home
+    detailsContainer.classList.add('hiddenBlock');
+    charsContainer.classList.add('hiddenBlock')
+    homeContainer.classList.remove('hiddenBlock');
+  }
+
+  unordererList[0].addEventListener('click', function() {
+    showLess();
+  });
+
+
+
   const buttonForToggle = document.querySelector('.button');
 
   buttonForToggle.addEventListener('click', function() {
-    const homeContainer = document.getElementById('home');
-    const charsContainer = document.getElementById('characters');
-    const detailsContainer = document.getElementById('details');
+    
 
 
     if(charsContainer.classList[1] === 'hiddenBlock'){
-      homeContainer.classList.add('hiddenBlock')
-      detailsContainer.classList.add('hiddenBlock');
+      showMore();
       this.innerHTML = 'Show Less ...';
-      charsContainer.classList.remove('hiddenBlock');
       paintCharacters(imagesParsed);
     }else{
+      showLess();
       this.innerHTML = 'Show More ...';
-      charsContainer.classList.add('hiddenBlock')
-      homeContainer.classList.remove('hiddenBlock');
       locationHelper('/home');
     }
 
