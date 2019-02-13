@@ -1,8 +1,20 @@
 function getRickMortysData () {
-  const uriAPI = 'https://rickandmortyapi.com/api/character/'
+  const uriAPI = 'https://rickandmortyapi.com/api/character/?page=1'
 
   return fetch(uriAPI).
   then(response => response.json());
+}
+
+function buildImgFromData(data){
+  const imagesDOM = data.map(item => {
+    return (`
+        <img src="${item.image}" 
+        alt="${item.name}" class="char-img" 
+        status ="${item.status}" />
+    `) ;
+
+  });
+  return imagesDOM;
 }
 
 function eraseElements(elementus){
@@ -24,29 +36,6 @@ function locationHelper (whereIAm){
     }, '', whereIAm);
 }
 
-/**
- * https://bost.ocks.org/mike/shuffle/
- * @param {*} array 
- */
-function shuffle(array) {
-  var copy = [], n = array.length, i;
-
-  // While there remain elements to shuffle…
-  while (n) {
-
-    // Pick a remaining element…
-    i = Math.floor(Math.random() * array.length);
-
-    // If not already shuffled, move it to the new array.
-    if (i in array) {
-      copy.push(array[i]);
-      delete array[i];
-      n--;
-    }
-  }
-
-  return copy;
-}
 
 function parserAssistant(stringDOM) {
   const parser = new DOMParser();
@@ -69,11 +58,10 @@ function paintButton(){
 }
 
 function paintDetails(item){
-  
 
   const detailDOM = (`
     <div>
-      <img id="${item.id}" src="${item.src}" alt="${item.alt}" class="char-img"/>
+      <img src="${item.src}" alt="${item.alt}" class="char-img"/>
       <h3>${item.alt}</h3>
       <p>${item.attributes.status.value}</p>
     </div>  
@@ -81,12 +69,13 @@ function paintDetails(item){
   return parserAssistant(detailDOM);
 }
 
-function paintHome(imagesDOM){
+function paintHome(imgDOM){
 
   const homeContainer = document.getElementById('home');
 
-  eraseElements(homeContainer)
-
+  const imagesDOM = buildImgFromData(imgDOM);
+  const imagesParsed = parserAssistant(imagesDOM);
+  
   locationHelper('/home');
 
   /**
@@ -102,28 +91,26 @@ function paintHome(imagesDOM){
     thirdRnd = Math.floor(Math.random() * 20); 
   }
   
-
-  console.log(imagesDOM[firstRnd], imagesDOM[secondRnd], imagesDOM[thirdRnd])
-
-  homeContainer.appendChild(imagesDOM[firstRnd]);
-  homeContainer.appendChild(imagesDOM[secondRnd]);
-  homeContainer.appendChild(imagesDOM[thirdRnd]);
+  homeContainer.appendChild(imagesParsed[firstRnd]);
+  homeContainer.appendChild(imagesParsed[secondRnd]);
+  homeContainer.appendChild(imagesParsed[thirdRnd]);
 
 }
 
-function paintCharacters(imagesDOM){
-  locationHelper('/characters');
-
+function paintCharacters(imgDOM){
+  
   const characterContainer = document.getElementById('characters');
   const detailsContainer = document.getElementById('details');
+  eraseElements(characterContainer);
 
-  for (const iterator of imagesDOM) {
-    characterContainer.appendChild(iterator);
-  }
+  locationHelper('/characters');
 
-  /**
-   * Adding Action for display details
-   */
+  const imagesDOM = buildImgFromData(imgDOM);
+
+  imagesDOM.map(item =>{
+    let imagesParsed = parserAssistant(item);
+    characterContainer.appendChild(imagesParsed[0]);
+  });
   
   characterContainer.addEventListener('click',
   function(event){
@@ -146,28 +133,26 @@ function paintCharacters(imagesDOM){
 
 
 
- function buildApp(data){
-  const preprosesingData = data.results.map(item => {
-    return  {id,name, status,image} = item;
-  });
-
-  const imagesDOM = preprosesingData.map(item => {
-    return (`
-        <img id="${item.id}" src="${item.image}" 
-        alt="${item.name}" class="char-img" 
-        status ="${item.status}" />
-    `) ;
-  });
-  
-  const imagesParsed = parserAssistant(imagesDOM);
-
-  paintHome(imagesParsed);
-  paintButton();
+function buildApp(data){
 
   const unordererList = document.querySelectorAll('.header-item');
   const homeContainer = document.getElementById('home');
   const charsContainer = document.getElementById('characters');
   const detailsContainer = document.getElementById('details');
+  paintButton();
+  const buttonForToggle = document.querySelector('.button');
+
+  const preprosesingData = data.results.map(item => {
+    return  {id,name, status,image} = item;
+  });
+
+  
+  //const imagesDOM = buildImgFromData(preprosesingData);
+  
+  //const imagesParsed = parserAssistant(imagesDOM);
+
+  paintHome(preprosesingData);
+
   
   function showMore(){
     //for display all
@@ -186,34 +171,29 @@ function paintCharacters(imagesDOM){
 
   unordererList[0].addEventListener('click', function() {
     showLess();
+    buttonForToggle.innerHTML = 'Show More ...';
+
   });
 
 
-
-  const buttonForToggle = document.querySelector('.button');
+  unordererList[1].addEventListener('click', function() {
+    showMore();
+    buttonForToggle.innerHTML = 'Show Less ...';
+    paintCharacters(preprosesingData);
+  });
 
   buttonForToggle.addEventListener('click', function() {
-    
-
 
     if(charsContainer.classList[1] === 'hiddenBlock'){
       showMore();
       this.innerHTML = 'Show Less ...';
-      paintCharacters(imagesParsed);
+      paintCharacters(preprosesingData);
     }else{
       showLess();
       this.innerHTML = 'Show More ...';
       locationHelper('/home');
     }
-
-
   });
-
-  /**
-   * rules
-   */
-
-
 
 }
 

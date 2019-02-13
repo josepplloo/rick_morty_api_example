@@ -8,6 +8,13 @@
 .header {
   color: brown;
   border: 1px solid black;
+  position: fixed;
+  width: 100vw;
+  background-color: azure;
+}
+
+.header h1 {
+  color: black;
 }
 
 .header-list {
@@ -34,10 +41,25 @@ content: "\200B"; /* add zero-width space */
 }
 
 .nav {
+  padding-top: 70px;
   color: brown;
   border: 1px solid black;
 }
 
 .hiddenBlock {
   display: none;
+}
+
+.button {
+  width: 90px;
+  height: 30px;
+  position: fixed;
+  bottom: 0;
+  border: 1px solid black;
+  border-radius: 3px;
+  box-shadow: 3px 4px 0px black;
+}
+
+.button:hover {
+  box-shadow: 1px 4px 0px black;
 }
