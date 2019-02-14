@@ -122,7 +122,9 @@ function paintHome(imgDOM){
 function paintCharacters(imgDOM){
   
   const characterContainer = document.getElementById('characters');
-  const detailsContainer = document.getElementById('details');
+  //const detailsContainer = document.getElementById('details');
+  //const buttonspagination = document.querySelectorAll('.pagination')
+
   eraseElements(characterContainer);
 
   locationHelper('/characters');
@@ -134,23 +136,6 @@ function paintCharacters(imgDOM){
     characterContainer.appendChild(imagesParsed[0]);
   });
   
-  characterContainer.addEventListener('click',
-  function(event){
-    const clickedElement = event.target;
-
-    if(clickedElement.nodeName == 'IMG' ){
-      
-      eraseElements(detailsContainer);
-      
-      const details = paintDetails(clickedElement);
-      locationHelper('/details');
-      detailsContainer.appendChild(details[0]);
-      detailsContainer.classList.remove('hiddenBlock');
-      characterContainer.classList.add('hiddenBlock');
-    }   
-    
-     
-  });
 
 }
 
@@ -190,6 +175,7 @@ function buildApp(data){
 
   function showLess(){
     //for display home
+    page =1;
     buttonspagination[0].classList.add('hiddenBlock');
     detailsContainer.classList.add('hiddenBlock');
     charsContainer.classList.add('hiddenBlock')
@@ -246,6 +232,16 @@ function buildApp(data){
     }
     if(clickedElement.innerText === buttonspagination[0].children[0].innerText){
       page --;
+      
+      function getDataForPage(dataFromAPI){
+        let data = dataFromAPI.results.map(item => {
+          return  {id,name, status,image} = item;
+        });
+        console.log(data);
+        paintCharacters(data);
+      }
+      getRickMortysData().then(getDataForPage);
+
       buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
       buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
       buttonspagination[0].children[0].classList.remove('hiddenBlock')
@@ -253,6 +249,24 @@ function buildApp(data){
 
   }); 
   
+
+  charsContainer.addEventListener('click',
+  function(event){
+    const clickedElement = event.target;
+
+    if(clickedElement.nodeName == 'IMG' ){
+      
+      eraseElements(detailsContainer);
+      
+      const details = paintDetails(clickedElement);
+      locationHelper('/details');
+      detailsContainer.appendChild(details[0]);
+      detailsContainer.classList.remove('hiddenBlock');
+      charsContainer.classList.add('hiddenBlock');
+      buttonspagination[0].classList.add('hiddenBlock')
+      
+    }   
+  });
 
  
 }
