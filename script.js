@@ -61,7 +61,7 @@ function paintButton(){
 function paintPagination(){
 
   const buttonDOM = (`
-      <div class="pagination">
+      <div class="pagination hiddenBlock">
         <button class="button hiddenBlock" type="button">
            < Page ${page -1}
         </button>
@@ -76,37 +76,6 @@ function paintPagination(){
     buttonContainer = document.querySelector(".button-container")
     buttonContainer.appendChild(buttonParserd[0]);
     buttonspagination = document.querySelectorAll('.pagination')
-
-    buttonspagination[0].addEventListener('click', function(event) {
-
-      const clickedElement = event.target;
-      
-      if(clickedElement.innerText === buttonspagination[0].children[1].innerText){
-        page ++;
-
-        function getDataForPage(dataFromAPI){
-          let data = dataFromAPI.results.map(item => {
-            return  {id,name, status,image} = item;
-          });
-          console.log(data);
-          paintCharacters(data);
-        }
-        getRickMortysData().then(getDataForPage);
-
-
-        buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
-        buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
-        buttonspagination[0].children[0].classList.remove('hiddenBlock')
-      }
-      if(clickedElement.innerText === buttonspagination[0].children[0].innerText){
-        page --;
-        buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
-        buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
-        buttonspagination[0].children[0].classList.remove('hiddenBlock')
-      }
-
-
-    }); 
     
 }
 
@@ -195,9 +164,8 @@ function buildApp(data){
   const detailsContainer = document.getElementById('details');
   paintButton();
   const buttonForToggle = document.querySelector('.button');
+  paintPagination();
   const buttonspagination = document.querySelectorAll('.pagination')
-
-
 
   const preprosesingData = data.results.map(item => {
     return  {id,name, status,image} = item;
@@ -216,15 +184,13 @@ function buildApp(data){
     homeContainer.classList.add('hiddenBlock')
     detailsContainer.classList.add('hiddenBlock');
     charsContainer.classList.remove('hiddenBlock');
+    buttonspagination[0].classList.remove('hiddenBlock');
 
   }
 
   function showLess(){
-    console.log(buttonspagination)
-
     //for display home
-    eraseElements(buttonspagination[0]);
-    console.log()
+    buttonspagination[0].classList.add('hiddenBlock');
     detailsContainer.classList.add('hiddenBlock');
     charsContainer.classList.add('hiddenBlock')
     homeContainer.classList.remove('hiddenBlock');
@@ -241,7 +207,6 @@ function buildApp(data){
     showMore();
     buttonForToggle.innerHTML = 'Show Less ...';
     paintCharacters(preprosesingData);
-    paintPagination();
   });
 
   buttonForToggle.addEventListener('click', function() {
@@ -250,7 +215,6 @@ function buildApp(data){
       showMore();
       this.innerHTML = 'Show Less ...';
       paintCharacters(preprosesingData);
-      paintPagination();
       
     }else{
       showLess();
@@ -259,6 +223,35 @@ function buildApp(data){
     }
   });
 
+  buttonspagination[0].addEventListener('click', function(event) {
+
+    const clickedElement = event.target;
+    
+    if(clickedElement.innerText === buttonspagination[0].children[1].innerText){
+      page ++;
+
+      function getDataForPage(dataFromAPI){
+        let data = dataFromAPI.results.map(item => {
+          return  {id,name, status,image} = item;
+        });
+        console.log(data);
+        paintCharacters(data);
+      }
+      getRickMortysData().then(getDataForPage);
+
+
+      buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
+      buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
+      buttonspagination[0].children[0].classList.remove('hiddenBlock')
+    }
+    if(clickedElement.innerText === buttonspagination[0].children[0].innerText){
+      page --;
+      buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
+      buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
+      buttonspagination[0].children[0].classList.remove('hiddenBlock')
+    }
+
+  }); 
   
 
  
