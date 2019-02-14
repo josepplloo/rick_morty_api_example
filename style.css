@@ -46,6 +46,11 @@ content: "\200B"; /* add zero-width space */
   border: 1px solid black;
 }
 
+.article {
+  padding-top: 70px;
+
+}
+
 .hiddenBlock {
   display: none;
 }

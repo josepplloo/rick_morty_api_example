@@ -1,8 +1,7 @@
 var page=1;
 
 function getRickMortysData()  {
-  const uriAPI = `https://rickandmortyapi.com/api/character/?page=${page}`;
-
+  let uriAPI = `https://rickandmortyapi.com/api/character/?page=${page}`;
   return fetch(uriAPI).
   then(response => response.json());
 }
@@ -60,6 +59,7 @@ function paintButton(){
 }
 
 function paintPagination(){
+
   const buttonDOM = (`
       <div class="pagination">
         <button class="button hiddenBlock" type="button">
@@ -75,15 +75,25 @@ function paintPagination(){
 
     buttonContainer = document.querySelector(".button-container")
     buttonContainer.appendChild(buttonParserd[0]);
-
     buttonspagination = document.querySelectorAll('.pagination')
-    console.log(buttonspagination)
+
     buttonspagination[0].addEventListener('click', function(event) {
 
       const clickedElement = event.target;
-      console.log(clickedElement, buttonspagination[0].children[1])
+      
       if(clickedElement.innerText === buttonspagination[0].children[1].innerText){
         page ++;
+
+        function getDataForPage(dataFromAPI){
+          let data = dataFromAPI.results.map(item => {
+            return  {id,name, status,image} = item;
+          });
+          console.log(data);
+          paintCharacters(data);
+        }
+        getRickMortysData().then(getDataForPage);
+
+
         buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
         buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
         buttonspagination[0].children[0].classList.remove('hiddenBlock')
@@ -168,7 +178,8 @@ function paintCharacters(imgDOM){
       detailsContainer.appendChild(details[0]);
       detailsContainer.classList.remove('hiddenBlock');
       characterContainer.classList.add('hiddenBlock');
-    }
+    }   
+    
      
   });
 
@@ -184,6 +195,9 @@ function buildApp(data){
   const detailsContainer = document.getElementById('details');
   paintButton();
   const buttonForToggle = document.querySelector('.button');
+  const buttonspagination = document.querySelectorAll('.pagination')
+
+
 
   const preprosesingData = data.results.map(item => {
     return  {id,name, status,image} = item;
@@ -206,7 +220,11 @@ function buildApp(data){
   }
 
   function showLess(){
+    console.log(buttonspagination)
+
     //for display home
+    eraseElements(buttonspagination[0]);
+    console.log()
     detailsContainer.classList.add('hiddenBlock');
     charsContainer.classList.add('hiddenBlock')
     homeContainer.classList.remove('hiddenBlock');
@@ -224,8 +242,6 @@ function buildApp(data){
     buttonForToggle.innerHTML = 'Show Less ...';
     paintCharacters(preprosesingData);
     paintPagination();
-
-    
   });
 
   buttonForToggle.addEventListener('click', function() {
@@ -235,7 +251,6 @@ function buildApp(data){
       this.innerHTML = 'Show Less ...';
       paintCharacters(preprosesingData);
       paintPagination();
-
       
     }else{
       showLess();
