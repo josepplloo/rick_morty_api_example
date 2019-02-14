@@ -50,10 +50,38 @@ content: "\200B"; /* add zero-width space */
   display: none;
 }
 
+.button-container {
+  width: 95vw ;
+  background-color: azure;
+}
+.pagination {
+  float: right;
+}
+
 .button {
+  margin-right: 10px;
   width: 90px;
   height: 30px;
-  position: fixed;
+  float: left;
+  bottom: 0;
+  border: 1px solid black;
+  border-radius: 3px;
+  box-shadow: 3px 4px 0px black;
+}
+
+.button:nth-child(2) {
+  width: 90px;
+  height: 30px;
+  float: right;
+  bottom: 0;
+  border: 1px solid black;
+  border-radius: 3px;
+  box-shadow: 3px 4px 0px black;
+}
+.button:nth-child(3) {
+  width: 90px;
+  height: 30px;
+  float: right;
   bottom: 0;
   border: 1px solid black;
   border-radius: 3px;
@@ -61,5 +89,6 @@ content: "\200B"; /* add zero-width space */
 }
 
 .button:hover {
-  box-shadow: 1px 4px 0px black;
+  padding-top: 4px;
+  box-shadow: 1px 1px 0px black;
 }

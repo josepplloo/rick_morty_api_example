@@ -1,5 +1,7 @@
-function getRickMortysData () {
-  const uriAPI = 'https://rickandmortyapi.com/api/character/?page=1'
+var page=1;
+
+function getRickMortysData()  {
+  const uriAPI = `https://rickandmortyapi.com/api/character/?page=${page}`;
 
   return fetch(uriAPI).
   then(response => response.json());
@@ -55,6 +57,47 @@ function paintButton(){
 
     buttonContainer = document.querySelector(".button-container")
     buttonContainer.appendChild(buttonParserd[0]);
+}
+
+function paintPagination(){
+  const buttonDOM = (`
+      <div class="pagination">
+        <button class="button hiddenBlock" type="button">
+           < Page ${page -1}
+        </button>
+        <button class="button" type="button">
+          Page ${page +1} >
+        </button>
+      </div>  
+    `) ;
+    
+    const buttonParserd =parserAssistant(buttonDOM);
+
+    buttonContainer = document.querySelector(".button-container")
+    buttonContainer.appendChild(buttonParserd[0]);
+
+    buttonspagination = document.querySelectorAll('.pagination')
+    console.log(buttonspagination)
+    buttonspagination[0].addEventListener('click', function(event) {
+
+      const clickedElement = event.target;
+      console.log(clickedElement, buttonspagination[0].children[1])
+      if(clickedElement.innerText === buttonspagination[0].children[1].innerText){
+        page ++;
+        buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
+        buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
+        buttonspagination[0].children[0].classList.remove('hiddenBlock')
+      }
+      if(clickedElement.innerText === buttonspagination[0].children[0].innerText){
+        page --;
+        buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
+        buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
+        buttonspagination[0].children[0].classList.remove('hiddenBlock')
+      }
+
+
+    }); 
+    
 }
 
 function paintDetails(item){
@@ -180,6 +223,9 @@ function buildApp(data){
     showMore();
     buttonForToggle.innerHTML = 'Show Less ...';
     paintCharacters(preprosesingData);
+    paintPagination();
+
+    
   });
 
   buttonForToggle.addEventListener('click', function() {
@@ -188,6 +234,9 @@ function buildApp(data){
       showMore();
       this.innerHTML = 'Show Less ...';
       paintCharacters(preprosesingData);
+      paintPagination();
+
+      
     }else{
       showLess();
       this.innerHTML = 'Show More ...';
@@ -195,6 +244,9 @@ function buildApp(data){
     }
   });
 
+  
+
+ 
 }
 
 getRickMortysData().then(buildApp);
