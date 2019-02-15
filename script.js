@@ -1,11 +1,31 @@
-var page=1;
+let page = 1;
 
+/**
+ * Return object from promise
+ */
 function getRickMortysData()  {
-  let uriAPI = `https://rickandmortyapi.com/api/character/?page=${page}`;
+  const uriAPI = `https://rickandmortyapi.com/api/character/?page=${page}`;
   return fetch(uriAPI).
   then(response => response.json());
 }
 
+/**
+ *
+ * @param {Object} data 
+ * 
+ */
+function getDataForPage(data){
+  const resultData = data.results.map(item => {
+    return  {id,name, status,image} = item;
+  });
+  return resultData;
+}
+
+/**
+ * 
+ * @param {Object} data 
+ * @returns imagesDOM {Object} 
+ */
 function buildImgFromData(data){
   const imagesDOM = data.map(item => {
     return (`
@@ -18,6 +38,10 @@ function buildImgFromData(data){
   return imagesDOM;
 }
 
+/**
+ * Removes Elements from the DOM
+ * @param {Element} elementus 
+ */
 function eraseElements(elementus){
   if( elementus != null ){
     while (elementus.firstChild){
@@ -28,9 +52,9 @@ function eraseElements(elementus){
 }
 
 /**
-   * BUG ALERT, The page does not redirect
-   * onli change the url
-   */
+* change the url
+*@param {String} whereIAm
+*/
 function locationHelper (whereIAm){
   history.replaceState({
     id: 'whereIAm'
@@ -38,6 +62,10 @@ function locationHelper (whereIAm){
 }
 
 
+/**
+ * Return a DOM
+ * @param {String} stringDOM 
+ */
 function parserAssistant(stringDOM) {
   const parser = new DOMParser();
   const parsedDOM = parser.parseFromString(stringDOM, "text/html")
@@ -45,6 +73,10 @@ function parserAssistant(stringDOM) {
   return parsedDOM;
 }
 
+
+/**
+ * Creates Left DOM's Button  
+ */
 function paintButton(){
   const buttonDOM = (`
         <button class="button" type="button">
@@ -58,15 +90,18 @@ function paintButton(){
     buttonContainer.appendChild(buttonParserd[0]);
 }
 
+/**
+ * Creates Rigth DOM's Buttons 
+ */
 function paintPagination(){
 
   const buttonDOM = (`
       <div class="pagination hiddenBlock">
         <button class="button hiddenBlock" type="button">
-           < Page ${page -1}
+           < Page 
         </button>
         <button class="button" type="button">
-          Page ${page +1} >
+          Page >
         </button>
       </div>  
     `) ;
@@ -79,6 +114,10 @@ function paintPagination(){
     
 }
 
+/**
+ * Creates Detail DOM   
+ * @param {Object} item
+ */
 function paintDetails(item){
 
   const detailDOM = (`
@@ -91,11 +130,15 @@ function paintDetails(item){
   return parserAssistant(detailDOM);
 }
 
-function paintHome(imgDOM){
+/**
+ * Create DOM for Home
+ * @param {Object} data 
+ */
+function paintHome(data){
 
   const homeContainer = document.getElementById('home');
 
-  const imagesDOM = buildImgFromData(imgDOM);
+  const imagesDOM = buildImgFromData(data);
   const imagesParsed = parserAssistant(imagesDOM);
   
   locationHelper('/home');
@@ -119,20 +162,20 @@ function paintHome(imgDOM){
 
 }
 
-function paintCharacters(imgDOM){
+/**
+ * Create Character's DOM
+ * @param {Object} data 
+ */
+function paintCharacters(data){
   
   const characterContainer = document.getElementById('characters');
-  //const detailsContainer = document.getElementById('details');
-  //const buttonspagination = document.querySelectorAll('.pagination')
-
   eraseElements(characterContainer);
-
   locationHelper('/characters');
 
-  const imagesDOM = buildImgFromData(imgDOM);
+  const imagesDOM = buildImgFromData(data);
 
   imagesDOM.map(item =>{
-    let imagesParsed = parserAssistant(item);
+    const imagesParsed = parserAssistant(item);
     characterContainer.appendChild(imagesParsed[0]);
   });
   
@@ -141,7 +184,10 @@ function paintCharacters(imgDOM){
 
 
 
-function buildApp(data){
+/**
+ * Contains logic for the App
+ * @param {Object} data 
+ */function buildApp(data){
 
   const unordererList = document.querySelectorAll('.header-item');
   const homeContainer = document.getElementById('home');
@@ -152,16 +198,7 @@ function buildApp(data){
   paintPagination();
   const buttonspagination = document.querySelectorAll('.pagination')
 
-  const preprosesingData = data.results.map(item => {
-    return  {id,name, status,image} = item;
-  });
-
-  
-  //const imagesDOM = buildImgFromData(preprosesingData);
-  
-  //const imagesParsed = parserAssistant(imagesDOM);
-
-  paintHome(preprosesingData);
+  paintHome(data);
 
   
   function showMore(){
@@ -175,7 +212,6 @@ function buildApp(data){
 
   function showLess(){
     //for display home
-    page =1;
     buttonspagination[0].classList.add('hiddenBlock');
     detailsContainer.classList.add('hiddenBlock');
     charsContainer.classList.add('hiddenBlock')
@@ -192,7 +228,7 @@ function buildApp(data){
   unordererList[1].addEventListener('click', function() {
     showMore();
     buttonForToggle.innerHTML = 'Show Less ...';
-    paintCharacters(preprosesingData);
+    paintCharacters(data);
   });
 
   buttonForToggle.addEventListener('click', function() {
@@ -200,7 +236,7 @@ function buildApp(data){
     if(charsContainer.classList[1] === 'hiddenBlock'){
       showMore();
       this.innerHTML = 'Show Less ...';
-      paintCharacters(preprosesingData);
+      paintCharacters(data);
       
     }else{
       showLess();
@@ -215,35 +251,15 @@ function buildApp(data){
     
     if(clickedElement.innerText === buttonspagination[0].children[1].innerText){
       page ++;
+      getRickMortysData().then(getDataForPage).then(paintCharacters);
 
-      function getDataForPage(dataFromAPI){
-        let data = dataFromAPI.results.map(item => {
-          return  {id,name, status,image} = item;
-        });
-        console.log(data);
-        paintCharacters(data);
-      }
-      getRickMortysData().then(getDataForPage);
-
-
-      buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
-      buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
       buttonspagination[0].children[0].classList.remove('hiddenBlock')
     }
     if(clickedElement.innerText === buttonspagination[0].children[0].innerText){
       page --;
       
-      function getDataForPage(dataFromAPI){
-        let data = dataFromAPI.results.map(item => {
-          return  {id,name, status,image} = item;
-        });
-        console.log(data);
-        paintCharacters(data);
-      }
-      getRickMortysData().then(getDataForPage);
+      getRickMortysData().then(getDataForPage).then(paintCharacters);
 
-      buttonspagination[0].children[1].innerHTML=`Page ${page+1} >` ;
-      buttonspagination[0].children[0].innerHTML=`< Page ${page}` ;
       buttonspagination[0].children[0].classList.remove('hiddenBlock')
     }
 
@@ -271,4 +287,4 @@ function buildApp(data){
  
 }
 
-getRickMortysData().then(buildApp);
+getRickMortysData().then(getDataForPage).then(buildApp);
