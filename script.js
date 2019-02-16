@@ -1,7 +1,7 @@
 let page = 1;
 
 /**
- * Return object from promise
+ * Returns object from promise
  */
 function getRickMortysData()  {
   const uriAPI = `https://rickandmortyapi.com/api/character/?page=${page}`;
@@ -10,45 +10,62 @@ function getRickMortysData()  {
 }
 
 /**
- *
+ * Returns filtered data
  * @param {Object} data 
- * 
  */
-function getDataForPage(data){
+function getDataForPage(data) {
   const resultData = data.results.map(item => {
-    return  {id,name, status,image} = item;
+    return  {id, name, status, image} = item;
   });
   return resultData;
 }
 
 /**
- * 
+ * Creates DOM Template of an image
  * @param {Object} data 
  * @returns imagesDOM {Object} 
  */
-function buildImgFromData(data){
-  const imagesDOM = data.map(item => {
+function buildImgFromData(data) {
+  const imagesDOM = data.map(({image, name, status}) => {
     return (`
-        <img src="${item.image}" 
-        alt="${item.name}" class="char-img" 
-        status ="${item.status}" />
+        <img src="${image}" 
+        alt="${name}" class="char-img" 
+        status ="${status}" />
     `) ;
 
-  });
+  }).join('');
   return imagesDOM;
 }
 
 /**
  * Removes Elements from the DOM
- * @param {Element} elementus 
+ * @param {Element} element
  */
-function eraseElements(elementus){
-  if( elementus != null ){
-    while (elementus.firstChild){
-      elementus.removeChild(elementus.firstChild);
+function eraseElements(element){
+  if( element != null ){
+    while (element.firstChild){
+      element.removeChild(element.firstChild);
     }
   }
   
+}
+
+/**
+   * TODO : Make a function for this
+   * First generate RND Numbers
+   */
+function randomHelper() { 
+  firstRnd = Math.floor(Math.random() * 20); 
+  secondRnd = Math.floor(Math.random() * 20); 
+  while (secondRnd === firstRnd) {
+    secondRnd = Math.floor(Math.random() * 20); 
+  }
+  thirdRnd = Math.floor(Math.random() * 20);
+  while (thirdRnd === firstRnd || thirdRnd === secondRnd) {
+    thirdRnd = Math.floor(Math.random() * 20); 
+  }
+
+  return [firstRnd, secondRnd, thirdRnd];
 }
 
 /**
@@ -135,30 +152,13 @@ function paintDetails(item){
  * @param {Object} data 
  */
 function paintHome(data){
-
+  randomArray= randomHelper();
+  const homeData = [data[randomArray[0]], data[randomArray[1]], data[randomArray[2]]];
+  const imagesDOM = buildImgFromData(homeData);
+  locationHelper('/home');
   const homeContainer = document.getElementById('home');
 
-  const imagesDOM = buildImgFromData(data);
-  const imagesParsed = parserAssistant(imagesDOM);
-  
-  locationHelper('/home');
-
-  /**
-   * IDK if it was a good validation
-   */
-  firstRnd = Math.floor(Math.random() * 20); 
-  secondRnd = Math.floor(Math.random() * 20); 
-  while (secondRnd ===firstRnd) {
-    secondRnd = Math.floor(Math.random() * 20); 
-  }
-  thirdRnd = Math.floor(Math.random() * 20);
-  while (thirdRnd ===firstRnd || thirdRnd ===secondRnd) {
-    thirdRnd = Math.floor(Math.random() * 20); 
-  }
-  
-  homeContainer.appendChild(imagesParsed[firstRnd]);
-  homeContainer.appendChild(imagesParsed[secondRnd]);
-  homeContainer.appendChild(imagesParsed[thirdRnd]);
+  homeContainer.innerHTML = imagesDOM;
 
 }
 
@@ -169,16 +169,11 @@ function paintHome(data){
 function paintCharacters(data){
   
   const characterContainer = document.getElementById('characters');
-  eraseElements(characterContainer);
   locationHelper('/characters');
 
   const imagesDOM = buildImgFromData(data);
 
-  imagesDOM.map(item =>{
-    const imagesParsed = parserAssistant(item);
-    characterContainer.appendChild(imagesParsed[0]);
-  });
-  
+  characterContainer.innerHTML = imagesDOM;
 
 }
 

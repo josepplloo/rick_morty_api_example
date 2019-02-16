@@ -30,7 +30,7 @@
 }
 
 .header-item::before {
-content: "\200B"; /* add zero-width space */
+  content: "\200B"; /* add zero-width space */
 }
 
 .header-item:hover {
@@ -49,6 +49,11 @@ content: "\200B"; /* add zero-width space */
 .article {
   padding-top: 70px;
 
+}
+
+.char-img {
+  border-radius: 3px;
+  margin: 0 3px;
 }
 
 .hiddenBlock {
