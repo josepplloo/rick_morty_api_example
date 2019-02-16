@@ -64,42 +64,36 @@ function locationHelper (whereIAm, charId){
     whereIAm :whereIAm,
     ActualPage : page,
     characterId : charId
-    //pasar la url
     }, '', whereIAm);
 }
 
-
 /**
- * Return a DOM
- * @param {String} stringDOM 
+ *Function for make apear and disapiar pagination buttons 
  */
-function parserAssistant(stringDOM) {
-  const parser = new DOMParser();
-  const parsedDOM = parser.parseFromString(stringDOM, "text/html")
-        .body.children;
-  return parsedDOM;
-}
-
-
-/**
- * Creates Left DOM's Button  
- */
-function paintButton(){
-  const buttonDOM = (`
-        <button class="button" type="button">
-          Show More ...
-        </button>
-    `) ;
-    buttonContainer = document.querySelector(".button-container")
-    buttonContainer.innerHTML = buttonDOM;
+function helperPagination(buttonspagination){
+   
+  if(page > 1||page < 25){
+    buttonspagination.children[0].classList.remove('hiddenBlock')
+    buttonspagination.children[1].classList.remove('hiddenBlock')
+  }
+  if(page === 1){
+    buttonspagination.children[0].classList.add('hiddenBlock')
+  }
+  if(page === 25){
+    buttonspagination.children[1].classList.add('hiddenBlock')
+  }
+  
 }
 
 /**
  * Creates Rigth DOM's Buttons 
  */
-function paintPagination(){
+function paintPagination() {
 
   const buttonDOM = (`
+      <button class="button" type="button">
+        Show More ...
+      </button>
       <div class="pagination hiddenBlock">
         <button class="button hiddenBlock" type="button">
            < Page 
@@ -110,11 +104,8 @@ function paintPagination(){
       </div>  
     `) ;
     
-    const buttonParserd =parserAssistant(buttonDOM);
-
     buttonContainer = document.querySelector(".button-container")
-    buttonContainer.appendChild(buttonParserd[0]);
-    buttonspagination = document.querySelectorAll('.pagination')
+    buttonContainer.innerHTML = buttonDOM;
     
 }
 
@@ -122,9 +113,7 @@ function paintPagination(){
  * Creates Detail DOM   
  * @param {Object} item
  */
-function paintDetails(item){
-  //hacer que llegue la data desde la promesa
-
+function paintDetails(item) {
   const detailDOM = (`
     <div>
       <img src="${item.src}" alt="${item.alt}" class="char-img" data-id="${item.id}" />
@@ -139,7 +128,7 @@ function paintDetails(item){
  * Create DOM for Home
  * @param {Object} data 
  */
-function paintHome(data){
+function paintHome(data) {
   randomArray= randomHelper();
   const homeData = [data[randomArray[0]], data[randomArray[1]], data[randomArray[2]]];
   const imagesDOM = buildImgFromData(homeData);
@@ -154,15 +143,11 @@ function paintHome(data){
  * Create Character's DOM
  * @param {Object} data 
  */
-function paintCharacters(data){
-  
+function paintCharacters(data) {
   const characterContainer = document.getElementById('characters');
   locationHelper('/characters','');
-
   const imagesDOM = buildImgFromData(data);
-
   characterContainer.innerHTML = imagesDOM;
-
 }
 
 
@@ -171,22 +156,20 @@ function paintCharacters(data){
  * Contains logic for the App
  * @param {Object} data 
  */
-function buildApp(data){
+function buildApp(data) {
 
   const unordererList = document.querySelectorAll('.header-item');
   const homeContainer = document.getElementById('home');
   const charsContainer = document.getElementById('characters');
   const detailsContainer = document.getElementById('details');
-  paintButton();
-  const buttonForToggle = document.querySelector('.button');
   paintPagination();
   const buttonspagination = document.querySelectorAll('.pagination')
+  const buttonForToggle = document.querySelector('.button');
 
   paintHome(data);
   paintCharacters(data);
 
-  
-  function showMore(){
+  function showMore() {
     //for display all
     locationHelper('/characters','');
     homeContainer.classList.add('hiddenBlock')
@@ -196,7 +179,7 @@ function buildApp(data){
 
   }
 
-  function showLess(){
+  function showLess() {
     //for display home
     buttonspagination[0].classList.add('hiddenBlock');
     detailsContainer.classList.add('hiddenBlock');
@@ -221,7 +204,6 @@ function buildApp(data){
     if(charsContainer.classList[1] === 'hiddenBlock'){
       showMore();
       this.innerHTML = 'Show Less ...';
-      
     }else{
       showLess();
       this.innerHTML = 'Show More ...';
@@ -232,31 +214,29 @@ function buildApp(data){
   buttonspagination[0].addEventListener('click', function(event) {
 
     const clickedElement = event.target;
-    
-    if(clickedElement.innerText === buttonspagination[0].children[1].innerText){
+
+    if(clickedElement.innerText === buttonspagination[0].children[1].innerText) {
       page ++;
-      console.log(history.state);
       getRickMortysData().then(getDataForPage).then(paintCharacters);
-      buttonspagination[0].children[0].classList.remove('hiddenBlock')
+      helperPagination(buttonspagination[0]);
     }
-    if(clickedElement.innerText === buttonspagination[0].children[0].innerText){
+    if(clickedElement.innerText === buttonspagination[0].children[0].innerText) {
       page --;
       getRickMortysData().then(getDataForPage).then(paintCharacters);
-      buttonspagination[0].children[0].classList.remove('hiddenBlock')
+      helperPagination(buttonspagination[0]);
     }
 
   }); 
   
 
   charsContainer.addEventListener('click',
-  function(event){
+  function(event) {
     const clickedElement = event.target;
 
-    if(clickedElement.nodeName == 'IMG' ){
+    if(clickedElement.nodeName == 'IMG' ) {
       
       const details = paintDetails(clickedElement);
       locationHelper('/details',clickedElement.dataset.id);
-      console.log(history.state);
       detailsContainer.innerHTML= details;
       detailsContainer.classList.remove('hiddenBlock');
       charsContainer.classList.add('hiddenBlock');

@@ -10,7 +10,7 @@
   border: 1px solid black;
   position: fixed;
   width: 100vw;
-  background-color: azure;
+  background-color: cornsilk;
 }
 
 .header h1 {
@@ -56,14 +56,20 @@
   margin: 0 3px;
 }
 
+.char-img:hover {
+  box-shadow: 3px 4px 0px black;
+  cursor: pointer;
+}
 .hiddenBlock {
   display: none;
 }
 
 .button-container {
   width: 95vw ;
-  background-color: azure;
+  height: 50px;
+  margin: 0 auto;
 }
+
 .pagination {
   float: right;
 }
