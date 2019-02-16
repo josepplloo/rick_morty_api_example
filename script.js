@@ -38,19 +38,6 @@ function buildImgFromData(data) {
 }
 
 /**
- * Removes Elements from the DOM
- * @param {Element} element
- */
-function eraseElements(element){
-  if( element != null ){
-    while (element.firstChild){
-      element.removeChild(element.firstChild);
-    }
-  }
-  
-}
-
-/**
    * TODO : Make a function for this
    * First generate RND Numbers
    */
@@ -144,7 +131,7 @@ function paintDetails(item){
       <p>${item.attributes.status.value}</p>
     </div>  
     `) ;
-  return parserAssistant(detailDOM);
+  return detailDOM;
 }
 
 /**
@@ -266,12 +253,10 @@ function paintCharacters(data){
     const clickedElement = event.target;
 
     if(clickedElement.nodeName == 'IMG' ){
-      
-      eraseElements(detailsContainer);
-      
+            
       const details = paintDetails(clickedElement);
       locationHelper('/details');
-      detailsContainer.appendChild(details[0]);
+      detailsContainer.innerHTML= details;
       detailsContainer.classList.remove('hiddenBlock');
       charsContainer.classList.add('hiddenBlock');
       buttonspagination[0].classList.add('hiddenBlock')
