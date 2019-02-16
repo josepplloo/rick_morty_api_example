@@ -26,11 +26,11 @@ function getDataForPage(data) {
  * @returns imagesDOM {Object} 
  */
 function buildImgFromData(data) {
-  const imagesDOM = data.map(({image, name, status}) => {
+  const imagesDOM = data.map(({id, image, name, status}) => {
     return (`
         <img src="${image}" 
         alt="${name}" class="char-img" 
-        status ="${status}" />
+        status ="${status}" data-id="${id}"/>
     `) ;
 
   }).join('');
@@ -59,9 +59,12 @@ function randomHelper() {
 * change the url
 *@param {String} whereIAm
 */
-function locationHelper (whereIAm){
+function locationHelper (whereIAm, charId){
   history.replaceState({
-    id: 'whereIAm'
+    whereIAm :whereIAm,
+    ActualPage : page,
+    characterId : charId
+    //pasar la url
     }, '', whereIAm);
 }
 
@@ -87,11 +90,8 @@ function paintButton(){
           Show More ...
         </button>
     `) ;
-    
-    const buttonParserd =parserAssistant(buttonDOM);
-
     buttonContainer = document.querySelector(".button-container")
-    buttonContainer.appendChild(buttonParserd[0]);
+    buttonContainer.innerHTML = buttonDOM;
 }
 
 /**
@@ -123,10 +123,11 @@ function paintPagination(){
  * @param {Object} item
  */
 function paintDetails(item){
+  //hacer que llegue la data desde la promesa
 
   const detailDOM = (`
     <div>
-      <img src="${item.src}" alt="${item.alt}" class="char-img"/>
+      <img src="${item.src}" alt="${item.alt}" class="char-img" data-id="${item.id}" />
       <h3>${item.alt}</h3>
       <p>${item.attributes.status.value}</p>
     </div>  
@@ -142,7 +143,7 @@ function paintHome(data){
   randomArray= randomHelper();
   const homeData = [data[randomArray[0]], data[randomArray[1]], data[randomArray[2]]];
   const imagesDOM = buildImgFromData(homeData);
-  locationHelper('/home');
+  locationHelper('/home','');
   const homeContainer = document.getElementById('home');
 
   homeContainer.innerHTML = imagesDOM;
@@ -156,7 +157,7 @@ function paintHome(data){
 function paintCharacters(data){
   
   const characterContainer = document.getElementById('characters');
-  locationHelper('/characters');
+  locationHelper('/characters','');
 
   const imagesDOM = buildImgFromData(data);
 
@@ -169,7 +170,8 @@ function paintCharacters(data){
 /**
  * Contains logic for the App
  * @param {Object} data 
- */function buildApp(data){
+ */
+function buildApp(data){
 
   const unordererList = document.querySelectorAll('.header-item');
   const homeContainer = document.getElementById('home');
@@ -181,10 +183,12 @@ function paintCharacters(data){
   const buttonspagination = document.querySelectorAll('.pagination')
 
   paintHome(data);
+  paintCharacters(data);
 
   
   function showMore(){
     //for display all
+    locationHelper('/characters','');
     homeContainer.classList.add('hiddenBlock')
     detailsContainer.classList.add('hiddenBlock');
     charsContainer.classList.remove('hiddenBlock');
@@ -210,7 +214,6 @@ function paintCharacters(data){
   unordererList[1].addEventListener('click', function() {
     showMore();
     buttonForToggle.innerHTML = 'Show Less ...';
-    paintCharacters(data);
   });
 
   buttonForToggle.addEventListener('click', function() {
@@ -218,12 +221,11 @@ function paintCharacters(data){
     if(charsContainer.classList[1] === 'hiddenBlock'){
       showMore();
       this.innerHTML = 'Show Less ...';
-      paintCharacters(data);
       
     }else{
       showLess();
       this.innerHTML = 'Show More ...';
-      locationHelper('/home');
+      locationHelper('/home','');
     }
   });
 
@@ -233,15 +235,13 @@ function paintCharacters(data){
     
     if(clickedElement.innerText === buttonspagination[0].children[1].innerText){
       page ++;
+      console.log(history.state);
       getRickMortysData().then(getDataForPage).then(paintCharacters);
-
       buttonspagination[0].children[0].classList.remove('hiddenBlock')
     }
     if(clickedElement.innerText === buttonspagination[0].children[0].innerText){
       page --;
-      
       getRickMortysData().then(getDataForPage).then(paintCharacters);
-
       buttonspagination[0].children[0].classList.remove('hiddenBlock')
     }
 
@@ -253,9 +253,10 @@ function paintCharacters(data){
     const clickedElement = event.target;
 
     if(clickedElement.nodeName == 'IMG' ){
-            
+      
       const details = paintDetails(clickedElement);
-      locationHelper('/details');
+      locationHelper('/details',clickedElement.dataset.id);
+      console.log(history.state);
       detailsContainer.innerHTML= details;
       detailsContainer.classList.remove('hiddenBlock');
       charsContainer.classList.add('hiddenBlock');
